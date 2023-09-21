@@ -24,6 +24,12 @@ func main() {
 
     var pngCount int
 
+    // Create the "resources" folder if it doesn't exist
+    resourcesFolder := "resources"
+    if _, err := os.Stat(resourcesFolder); os.IsNotExist(err) {
+        os.Mkdir(resourcesFolder, os.ModePerm)
+    }
+
     for i := 0; i < len(exeData)-len(pngStartSig); i++ {
         if bytesEqual(exeData[i:i+len(pngStartSig)], pngStartSig) {
             // Found a PNG start signature, look for the end signature
@@ -33,8 +39,8 @@ func main() {
                     pngCount++
                     pngData := exeData[i : j+len(pngEndSig)]
 
-                    // Save the PNG image as a file
-                    fileName := fmt.Sprintf("extracted_png_%d.png", pngCount)
+                    // Save the PNG image in the "resources" folder
+                    fileName := fmt.Sprintf("resources/extracted_png_%d.png", pngCount)
                     err := os.WriteFile(fileName, pngData, 0644)
                     if err != nil {
                         fmt.Printf("Error saving PNG file %s: %v\n", fileName, err)
